@@ -5,6 +5,7 @@ prompting, multi-step pipelines, RAG, fine-tuning and agents.
 
 | Module | Topic |
 |---|---|
+| [week01_foundations](week01_foundations/) | Chat Completions, provider abstraction, tokens/context, chained calls with structured output |
 
 ## Layout
 
