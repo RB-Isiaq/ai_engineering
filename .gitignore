@@ -1,0 +1,22 @@
+# secrets
+.env
+
+# python / uv
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+
+# jupyter
+.ipynb_checkpoints/
+
+# generated artifacts
+*.log
+brochure*.md
+vector_db/
+*_vectorstore/
+
+# os / editors
+.DS_Store
+.vscode/
+.idea/
