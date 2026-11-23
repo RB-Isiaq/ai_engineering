@@ -1,5 +1,10 @@
 # week01_foundations
 
+This module covers the fundamentals that everything later builds on. It looks at what an LLM API call
+actually is, why one client works across vendors and local models, how tokens and statelessness constrain
+application design, and how to break a task into a pipeline of focused model calls with structured output.
+The result is a provider-agnostic toolkit and three CLI tools.
+
 | Notebook | Scope |
 |---|---|
 | [01_chat_completions](01_chat_completions.ipynb) | Request structure, system vs user prompts, page summarization |
