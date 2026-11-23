@@ -44,11 +44,29 @@ PROVIDERS: dict[str, Provider] = {
         key_env="OPENAI_API_KEY",
         request_defaults={"reasoning_effort": "none"},
     ),
+    "anthropic": Provider(
+        name="anthropic",
+        default_model="claude-haiku-5-5",
+        base_url="https://api.anthropic.com/v1/",
+        key_env="ANTHROPIC_API_KEY",
+    ),
     "gemini": Provider(
         name="gemini",
         default_model="gemini-3.1-flash-lite",
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
         key_env="GOOGLE_API_KEY",
+    ),
+    "groq": Provider(
+        name="groq",
+        default_model="openai/gpt-oss-120b",
+        base_url="https://api.groq.com/openai/v1",
+        key_env="GROQ_API_KEY",
+    ),
+    "openrouter": Provider(
+        name="openrouter",
+        default_model="openai/gpt-oss-120b",
+        base_url="https://openrouter.ai/api/v1",
+        key_env="OPENROUTER_API_KEY",
     ),
     "ollama": Provider(
         name="ollama",
@@ -80,7 +98,17 @@ def get_client(provider: str | None = None) -> OpenAI:
     return OpenAI(base_url=p.base_url, api_key=api_key)
 
 
-def _request(messages: list[Message], provider: str | None, model: str | None, **kwargs):
+def available_providers() -> list[str]:
+    """Providers usable right now: Ollama plus any whose API key is set."""
+    return [
+        name
+        for name, p in PROVIDERS.items()
+        if name == "ollama" or (p.key_env and os.getenv(p.key_env))
+    ]
+
+
+def completion(messages: list, provider: str | None = None, model: str | None = None, **kwargs):
+    """Raw SDK call - returns the full response object (needed for tool calls, usage, etc.)."""
     p = _provider(provider)
     params = {**p.request_defaults, **kwargs}
     return get_client(p.name).chat.completions.create(
@@ -98,7 +126,7 @@ def chat(
     """Send a full message list and return the reply (parsed if as_json=True)."""
     if as_json:
         kwargs["response_format"] = {"type": "json_object"}
-    reply = _request(messages, provider, model, **kwargs).choices[0].message.content or ""
+    reply = completion(messages, provider, model, **kwargs).choices[0].message.content or ""
     return json.loads(reply) if as_json else reply
 
 
@@ -113,7 +141,7 @@ def stream(
     messages: list[Message], provider: str | None = None, model: str | None = None, **kwargs
 ) -> Iterator[str]:
     """Yield the reply chunk by chunk as the model generates it."""
-    for chunk in _request(messages, provider, model, stream=True, **kwargs):
+    for chunk in completion(messages, provider, model, stream=True, **kwargs):
         if chunk.choices and (delta := chunk.choices[0].delta.content):
             yield delta
 

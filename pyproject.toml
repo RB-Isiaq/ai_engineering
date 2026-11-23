@@ -4,9 +4,13 @@ version = "0.1.0"
 description = "Hands-on practice building LLM-powered applications"
 requires-python = ">=3.12"
 dependencies = [
+    "anthropic>=0.69.0",
     "beautifulsoup4>=4.14.2",
+    "google-genai>=1.41.0",
+    "gradio>=5.47.2,<6.0",
     "ipykernel>=6.30.1",
     "ipython>=9.0.0",
+    "litellm>=1.77.5",
     "openai>=1.109.1",
     "python-dotenv>=1.1.1",
     "requests>=2.32.5",
